@@ -12,45 +12,48 @@ import java.util.Properties;
  */
 @Slf4j
 public class ProducerFastStart {
-    private static final String brokerList = "101.35.228.171:9092";
-    private static final String topic = "topic-demo";
+    private static final String brokerList = "localhost:9092";
+    private static final String topic = "brave-demo";
 
     public static void main(String[] args) {
+
         Properties properties = new Properties();
-        //设置key序列化器
-        //properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        //设置Key序列化器
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         //设置重试次数
         properties.put(ProducerConfig.RETRIES_CONFIG, 10);
 
         //设置值序列化器
-        //properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         //设置集群地址
-        //properties.put("bootstrap.servers", brokerList);
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
 
-        //消息发送
+        //指定自定义拦截器
+        //properties.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, ProducerInterceptorPreFix.class.getName());
+
+        //发送消息
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
-        //封装消息发送对象
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, "kafka-demo", "hello,brave!");
+        ProducerRecord<String ,String> record = new ProducerRecord<>(topic, "kafka-demo", "hello, kafka!");
         try {
+            //同步发送
+            //Future<RecordMetadata> send = producer.send(record);
+            //RecordMetadata metadata = send.get();
+            //log.info("同步发送 - topic:{}, partition:{}, offset:{}", metadata.topic(), metadata.partition(), metadata.offset());
 
-            //Future<RecordMetadata> recordMetadata = producer.send(record);
-            //log.info("topic:{}, partition:{}, offset:{}", recordMetadata.get().topic(), recordMetadata.get().partition(), recordMetadata.get().offset());
-
+            //异步发送
             producer.send(record, new Callback() {
                 @Override
-                public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                public void onCompletion(RecordMetadata metadata, Exception e) {
                     if (e == null) {
-                        log.info("topic:{}, partition:{}, offset:{}", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
+                        log.info("异步发送 - topic:{}, partition:{}, offset:{}", metadata.topic(), metadata.partition(), metadata.offset());
                     }
                 }
             });
         } catch (Exception e) {
-            log.error("异常:", e);
+            log.error("生产者发送消息异常:", e);
         }
         producer.close();
     }

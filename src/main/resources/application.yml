@@ -4,14 +4,15 @@ spring:
   application:
     name: utils
   kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      transaction-id-prefix: kafka_tx
-      properties:
-        enable.idempotence: true
-
+    bootstrap-servers: localhost:9095
     consumer:
-      bootstrap-servers: localhost:9092
+      enable-auto-commit: true
+      group-id: group-demo-01
+  secondKafka:
+    bootstrap-servers: localhost:9096
+    consumer:
+      enable-auto-commit: true
+      group-id: group-demo-02
 
 logging:
   config: classpath:log4j2.xml

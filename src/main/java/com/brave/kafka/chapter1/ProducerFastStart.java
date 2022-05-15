@@ -37,21 +37,24 @@ public class ProducerFastStart {
         //发送消息
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
         ProducerRecord<String ,String> record = new ProducerRecord<>(topic, "kafka-demo", "hello, kafka!");
+        ProducerRecord<String ,String> record2 = new ProducerRecord<>(topic, 0, System.currentTimeMillis() - 10 * 500,  "kafka-demo", "hello, kafka! -> 超时");
         try {
             //同步发送
             //Future<RecordMetadata> send = producer.send(record);
             //RecordMetadata metadata = send.get();
             //log.info("同步发送 - topic:{}, partition:{}, offset:{}", metadata.topic(), metadata.partition(), metadata.offset());
 
+            producer.send(record);
+            producer.send(record2);
             //异步发送
-            producer.send(record, new Callback() {
-                @Override
-                public void onCompletion(RecordMetadata metadata, Exception e) {
-                    if (e == null) {
-                        log.info("异步发送 - topic:{}, partition:{}, offset:{}", metadata.topic(), metadata.partition(), metadata.offset());
-                    }
-                }
-            });
+            //producer.send(record, new Callback() {
+            //    @Override
+            //    public void onCompletion(RecordMetadata metadata, Exception e) {
+            //        if (e == null) {
+            //            log.info("异步发送 - topic:{}, partition:{}, offset:{}", metadata.topic(), metadata.partition(), metadata.offset());
+            //        }
+            //    }
+            //});
         } catch (Exception e) {
             log.error("生产者发送消息异常:", e);
         }

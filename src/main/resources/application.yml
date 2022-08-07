@@ -16,3 +16,11 @@ spring:
 
 logging:
   config: classpath:log4j2.xml
+dubbo:
+  application:
+    name: test
+  registry:
+    address: zookeeper://localhost:2184
+  protocol:
+    name: dubbo
+    port: 20880

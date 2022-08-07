@@ -10,15 +10,15 @@ import java.io.IOException;
 public class SimCardMakeUp {
 
     public static void main(String[] args) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter("333.csv"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("20220806132940.csv"));
         writer.write("ICCID,IMSI,MSISDN");
         writer.newLine();
-        for(int i = 200; i < 210; i++){
-            writer.write("29860700020211229" + i);
+        for(int i = 100; i < 50000; i++){
+            writer.write("49860700020211229" + i);
             writer.write(",");
-            writer.write("2600020121229" + i);
+            writer.write("4600020121229" + i);
             writer.write(",");
-            writer.write("26641229" + i);
+            writer.write("46641229" + i);
             writer.newLine();
         }
         writer.flush();
